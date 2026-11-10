@@ -3,23 +3,23 @@
 --- @param ctx {options: table} Context (options = plugin configuration from mise.toml)
 --- @return table[] List of environment variable definitions with key/value pairs
 function PLUGIN:MiseEnv(ctx)
-	-- Access plugin options from mise.toml configuration
-	-- Example mise.toml:
-	--   [env_plugins.my-env-plugin]
-	--   my_option = "value"
-	local _options = ctx.options or {}
+    -- Access plugin options from mise.toml configuration
+    -- Example mise.toml:
+    --   [env_plugins.my-env-plugin]
+    --   my_option = "value"
+    local _options = ctx.options or {}
 
-	-- Return list of environment variables to set
-	local env_vars = {}
+    -- Return list of environment variables to set
+    local env_vars = {}
 
-	-- Example: Static environment variable
-	table.insert(env_vars, {
-		key = "MY_ENV_VAR",
-		value = "my_value",
-	})
+    -- Example: Static environment variable
+    table.insert(env_vars, {
+        key = "SKOGAI_ENV_VAR",
+        value = "my skogai env var",
+    })
 
-	-- Example: Dynamic environment variable from options
-	--[[
+    -- Example: Dynamic environment variable from options
+    --[[
     if options.api_key then
         table.insert(env_vars, {
             key = "MY_API_KEY",
@@ -28,14 +28,12 @@ function PLUGIN:MiseEnv(ctx)
     end
     --]]
 
-	-- Example: Environment variable with computed value
-	--[[
+    -- Example: Environment variable with computed value
     local home = os.getenv("HOME")
     table.insert(env_vars, {
-        key = "MY_CONFIG_DIR",
-        value = home .. "/.config/my-tool"
+        key = "SKOGAI_CONFIG_DIR",
+        value = home .. "/.config/skogai",
     })
-    --]]
 
-	return env_vars
+    return env_vars
 end
