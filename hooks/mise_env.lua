@@ -31,6 +31,10 @@ function PLUGIN:MiseEnv(ctx)
     -- Example: Environment variable with computed value
     local home = os.getenv("HOME")
     table.insert(env_vars, {
+        key = "SKOGAI_MONOREPO_DIR",
+        value = home .. "/Work",
+    })
+    table.insert(env_vars, {
         key = "SKOGAI_CONFIG_DIR",
         value = home .. "/.config/skogai",
     })
