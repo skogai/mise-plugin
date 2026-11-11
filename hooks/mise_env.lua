@@ -1,43 +1,12 @@
 --- Returns environment variables to set when this plugin is active
 --- Documentation: https://mise.jdx.dev/env-plugin-development.html#miseenv-hook
---- @param ctx {options: table} Context (options = plugin configuration from mise.toml)
---- @return table[] List of environment variable definitions with key/value pairs
+--- @param ctx MiseEnvCtx Options from the `_.skogai` directive and the declaring config's root
+--- @return EnvKey[] List of environment variable definitions with key/value pairs
 function PLUGIN:MiseEnv(ctx)
-    -- Access plugin options from mise.toml configuration
-    -- Example mise.toml:
-    --   [env_plugins.my-env-plugin]
-    --   my_option = "value"
-    local _options = ctx.options or {}
+    local skogai = require("lib.skogai")
 
-    -- Return list of environment variables to set
-    local env_vars = {}
-
-    -- Example: Static environment variable
-    table.insert(env_vars, {
-        key = "SKOGAI_ENV_VAR",
-        value = "my skogai env var",
-    })
-
-    -- Example: Dynamic environment variable from options
-    --[[
-    if options.api_key then
-        table.insert(env_vars, {
-            key = "MY_API_KEY",
-            value = options.api_key
-        })
-    end
-    --]]
-
-    -- Example: Environment variable with computed value
-    local home = os.getenv("HOME")
-    table.insert(env_vars, {
-        key = "SKOGAI_MONOREPO_DIR",
-        value = home .. "/Work",
-    })
-    table.insert(env_vars, {
-        key = "SKOGAI_CONFIG_DIR",
-        value = home .. "/.config/skogai",
-    })
-
-    return env_vars
+    return {
+        { key = "SKOGAI_MONOREPO_DIR", value = skogai.root(ctx) },
+        { key = "SKOGAI_CONFIG_DIR", value = skogai.config_dir(ctx) },
+    }
 end

@@ -1,24 +1,9 @@
 --- Returns PATH entries to prepend when this plugin is active
 --- Documentation: https://mise.jdx.dev/env-plugin-development.html#misepath-hook
---- @param ctx {options: table} Context (options = plugin configuration from mise.toml)
+--- @param ctx MisePathCtx Options from the `_.skogai` directive and the declaring config's root
 --- @return string[] List of paths to prepend to PATH
 function PLUGIN:MisePath(ctx)
-    -- Access plugin options from mise.toml configuration
-    local _options = ctx.options or {}
+    local skogai = require("lib.skogai")
 
-    -- Return list of paths to prepend to PATH
-    local paths = {}
-
-    -- Example: Add a path from options
-    --[[
-    if options.path_to_add then
-        table.insert(paths, options.path_to_add)
-    end
-    --]]
-
-    -- Example: Add a computed path
-    local home = os.getenv("HOME")
-    table.insert(paths, home .. "/.local/bin")
-
-    return paths
+    return skogai.paths(ctx)
 end

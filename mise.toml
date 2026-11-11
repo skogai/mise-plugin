@@ -11,8 +11,12 @@ stylua = "latest"
 
 [tasks.lint]
 description = "Lint Lua scripts and GitHub Actions using hk"
-run = "hk check"
+run = "hk check --all"
 
 [tasks.lint-fix]
 description = "Fix linting issues"
 run = "hk fix"
+
+[tasks.test]
+description = "Run the hooks through mise in throwaway directories and check the result"
+run = "sh test/run.sh"
