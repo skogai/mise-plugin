@@ -89,6 +89,7 @@ ARCH_TYPE = ""
 
 ---@class MiseEnvCtx
 ---@field options table Plugin options from mise.toml
+---@field config_root string Root directory of the config file that declares the plugin
 
 ---@class MiseEnvResult
 ---@field env? EnvKey[] Environment variables to set
@@ -97,6 +98,7 @@ ARCH_TYPE = ""
 
 ---@class MisePathCtx
 ---@field options table Plugin options from mise.toml
+---@field config_root string Root directory of the config file that declares the plugin
 
 ---@class BackendListVersionsCtx
 ---@field tool string Tool name
