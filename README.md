@@ -22,7 +22,7 @@ mise installs the plugin from the URL the first time the config is loaded.
 |---|---|
 | `SKOGAI_MONOREPO_DIR` | The workspace root. |
 | `SKOGAI_CONFIG_DIR` | The SkogAI config directory. |
-| `SKOGAI_HOST` | The host name: `/proc/sys/kernel/hostname`, or `uname -n` where that file does not exist. |
+| `SKOGAI_HOST` | The host name, from `/proc/sys/kernel/hostname`, `/etc/hostname` or `$HOSTNAME`, whichever is found first. Empty when none is available, as on macOS without `$HOSTNAME`; set it in config there. |
 | `SKOGAI_OS` | The operating system in mise's naming, as in `mise.lock`: `linux`, `macos`, `windows`. |
 | `SKOGAI_ARCH` | The CPU architecture in mise's naming: `x64`, `arm64`. |
 
@@ -53,7 +53,7 @@ mise applies `[env]` entries in order, so an entry below the directive, or in a 
 
 `SKOGAI_MONOREPO_DIR` and `SKOGAI_CONFIG_DIR` are not read from the environment. Set them with the `root` and `config_dir` options.
 
-The hooks only compute values. They do not download or write files. The only command they run is `uname -n`, on systems without `/proc/sys/kernel/hostname`.
+The hooks only compute values. They do not download, write files, or run commands.
 
 ## Layout
 

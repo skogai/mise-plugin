@@ -87,6 +87,13 @@ check "a value set below the directive wins" "set-below" "$(value "$project" SKO
 
 cat >"$project/mise.toml" <<'TOML'
 [env]
+SKOGAI_HOST = ""
+_.skogai = {}
+TOML
+check "an empty value counts as unset" "$(uname -n)" "$(value "$project" SKOGAI_HOST)"
+
+cat >"$project/mise.toml" <<'TOML'
+[env]
 _.skogai = {}
 TOML
 cat >"$project/mise.local.toml" <<'TOML'

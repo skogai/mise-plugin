@@ -1,5 +1,4 @@
 --- Shared option handling for the skogai env plugin hooks.
-local cmd = require("cmd")
 local file = require("file")
 
 local M = {}
@@ -99,22 +98,30 @@ function M.existing(name)
     return nil
 end
 
---- Host name: the kernel's host name on Linux, otherwise `uname -n`.
---- @return string
-function M.host()
-    local f = io.open("/proc/sys/kernel/hostname", "r")
-    if f ~= nil then
-        local name = f:read("*l")
-        f:close()
-        if name ~= nil and name ~= "" then
-            return name
+--- First non-empty line of a file, or nil.
+--- @param path string
+--- @return string|nil
+local function first_line(path)
+    local f = io.open(path, "r")
+    if f == nil then
+        return nil
+    end
+    local line = f:read("*l")
+    f:close()
+    if line ~= nil then
+        line = line:gsub("^%s+", ""):gsub("%s+$", "")
+        if line ~= "" then
+            return line
         end
     end
-    local ok, out = pcall(cmd.exec, "uname -n")
-    if ok and type(out) == "string" then
-        return (out:gsub("%s+$", ""))
-    end
-    return ""
+    return nil
+end
+
+--- Host name, read without running a command: the kernel's host name on Linux, then `/etc/hostname`,
+--- then `$HOSTNAME`. Empty when none is available; config can set `SKOGAI_HOST` instead.
+--- @return string
+function M.host()
+    return first_line("/proc/sys/kernel/hostname") or first_line("/etc/hostname") or M.existing("HOSTNAME") or ""
 end
 
 --- mise's names for platforms, as in `mise.lock` and the `os()` and `arch()` template functions.
