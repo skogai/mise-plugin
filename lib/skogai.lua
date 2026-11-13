@@ -1,4 +1,5 @@
 --- Shared option handling for the skogai env plugin hooks.
+local cmd = require("cmd")
 local file = require("file")
 
 local M = {}
@@ -84,6 +85,52 @@ function M.paths(ctx)
         end
     end
     return result
+end
+
+--- A value already in the environment when the hook runs, or nil when unset or empty.
+--- It was set by the shell, by a config file that loads earlier, or by an `[env]` entry above the directive.
+--- @param name string
+--- @return string|nil
+function M.existing(name)
+    local value = os.getenv(name)
+    if value ~= nil and value ~= "" then
+        return value
+    end
+    return nil
+end
+
+--- Host name: the kernel's host name on Linux, otherwise `uname -n`.
+--- @return string
+function M.host()
+    local f = io.open("/proc/sys/kernel/hostname", "r")
+    if f ~= nil then
+        local name = f:read("*l")
+        f:close()
+        if name ~= nil and name ~= "" then
+            return name
+        end
+    end
+    local ok, out = pcall(cmd.exec, "uname -n")
+    if ok and type(out) == "string" then
+        return (out:gsub("%s+$", ""))
+    end
+    return ""
+end
+
+--- mise's names for platforms, as in `mise.lock` and the `os()` and `arch()` template functions.
+local OS_NAMES = { darwin = "macos" }
+local ARCH_NAMES = { amd64 = "x64", ["386"] = "x86" }
+
+--- Operating system in mise's naming: `linux`, `macos`, `windows`.
+--- @return string
+function M.os()
+    return OS_NAMES[RUNTIME.osType] or RUNTIME.osType
+end
+
+--- CPU architecture in mise's naming: `x64`, `arm64`.
+--- @return string
+function M.arch()
+    return ARCH_NAMES[RUNTIME.archType] or RUNTIME.archType
 end
 
 return M
