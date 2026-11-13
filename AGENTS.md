@@ -5,7 +5,7 @@
 This repository implements the SkogAI mise environment plugin. It supplies workspace environment variables and optional PATH entries. Keep hooks limited to computing values; do not add downloads, file writes, or command execution.
 
 - `metadata.lua`: plugin identity, version, and minimum supported mise version.
-- `hooks/mise_env.lua`: `SKOGAI_MONOREPO_DIR` and `SKOGAI_CONFIG_DIR` definitions.
+- `hooks/mise_env.lua`: `SKOGAI_MONOREPO_DIR` and `SKOGAI_CONFIG_DIR`, and the `SKOGAI_HOST`, `SKOGAI_OS` and `SKOGAI_ARCH` defaults that keep a value already set.
 - `hooks/mise_path.lua`: PATH entries.
 - `lib/skogai.lua`: shared option handling and path resolution.
 - `types/mise-plugin.lua`: LuaCATS definitions for the mise plugin API.
