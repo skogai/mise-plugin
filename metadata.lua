@@ -5,7 +5,7 @@ PLUGIN = {
     name = "skogai",
 
     --- Plugin version (required)
-    version = "0.1.0",
+    version = "0.2.0",
 
     --- Plugin description (optional)
     description = "SkogAI workspace environment variables and PATH entries for mise",

@@ -65,6 +65,45 @@ TOML
 check "root expands ~" "$tmp/home/elsewhere" "$(value "$project" SKOGAI_MONOREPO_DIR)"
 check "config dir follows XDG_CONFIG_HOME" "/xdg/skogai" "$(value "$project" SKOGAI_CONFIG_DIR)"
 
+# Host defaults, and the two ways config overrides them.
+case $(uname -m) in x86_64) arch=x64 ;; aarch64 | arm64) arch=arm64 ;; *) arch=$(uname -m) ;; esac
+case $(uname -s) in Linux) os=linux ;; Darwin) os=macos ;; *) os=$(uname -s) ;; esac
+cat >"$project/mise.toml" <<'TOML'
+[env]
+_.skogai = {}
+TOML
+check "default host" "$(uname -n)" "$(value "$project" SKOGAI_HOST)"
+check "default os, in mise naming" "$os" "$(value "$project" SKOGAI_OS)"
+check "default arch, in mise naming" "$arch" "$(value "$project" SKOGAI_ARCH)"
+
+cat >"$project/mise.toml" <<'TOML'
+[env]
+SKOGAI_HOST = "set-above"
+_.skogai = {}
+SKOGAI_OS = "set-below"
+TOML
+check "a value set above the directive is kept" "set-above" "$(value "$project" SKOGAI_HOST)"
+check "a value set below the directive wins" "set-below" "$(value "$project" SKOGAI_OS)"
+
+cat >"$project/mise.toml" <<'TOML'
+[env]
+_.skogai = {}
+TOML
+cat >"$project/mise.local.toml" <<'TOML'
+[env]
+SKOGAI_HOST = "from-local"
+TOML
+check "a later config file wins" "from-local" "$(value "$project" SKOGAI_HOST)"
+rm "$project/mise.local.toml"
+
+mkdir -p "$tmp/iso/config"
+cat >"$tmp/iso/config/config.toml" <<'TOML'
+[env]
+SKOGAI_ARCH = "from-global"
+TOML
+check "a value from an earlier config file is kept" "from-global" "$(value "$project" SKOGAI_ARCH)"
+rm "$tmp/iso/config/config.toml"
+
 if [ "$failures" -gt 0 ]; then
     echo "$failures check(s) failed"
     exit 1

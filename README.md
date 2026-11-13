@@ -22,6 +22,9 @@ mise installs the plugin from the URL the first time the config is loaded.
 |---|---|
 | `SKOGAI_MONOREPO_DIR` | The workspace root. |
 | `SKOGAI_CONFIG_DIR` | The SkogAI config directory. |
+| `SKOGAI_HOST` | The host name: `/proc/sys/kernel/hostname`, or `uname -n` where that file does not exist. |
+| `SKOGAI_OS` | The operating system in mise's naming, as in `mise.lock`: `linux`, `macos`, `windows`. |
+| `SKOGAI_ARCH` | The CPU architecture in mise's naming: `x64`, `arm64`. |
 
 It prepends each directory in `paths` to `PATH`. With no `paths`, `PATH` is left alone.
 
@@ -35,7 +38,22 @@ It prepends each directory in `paths` to `PATH`. With no `paths`, `PATH` is left
 
 A leading `~` is expanded to `$HOME`. Absolute paths are used as written. A relative `root` resolves against the directory of the declaring config file, not the current directory, so the values are the same from any subdirectory.
 
-The hooks only compute values. They do not download, write files, or run commands.
+## Overriding the defaults
+
+`SKOGAI_HOST`, `SKOGAI_OS` and `SKOGAI_ARCH` are defaults. Set the variable in config to replace one:
+
+```toml
+[env]
+SKOGAI_HOST = "laptop"     # above the directive: the plugin keeps it
+_.skogai = {}
+SKOGAI_OS = "linux"        # below the directive: replaces the plugin's value
+```
+
+mise applies `[env]` entries in order, so an entry below the directive, or in a config file that loads later such as `mise.local.toml`, wins over the plugin. An entry above the directive, in a file that loads earlier such as the global config, or in the shell's environment is already set when the hook runs, and the plugin keeps it. An empty value counts as unset.
+
+`SKOGAI_MONOREPO_DIR` and `SKOGAI_CONFIG_DIR` are not read from the environment. Set them with the `root` and `config_dir` options.
+
+The hooks only compute values. They do not download or write files. The only command they run is `uname -n`, on systems without `/proc/sys/kernel/hostname`.
 
 ## Layout
 
